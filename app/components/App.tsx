@@ -73,8 +73,9 @@ export const App = ({ serverDate }: AppProps) => {
           dateTime={selectedDate.toISOString()}
         >
           <span className={styles.headerTime__weekNumber}>
+
+            <NumberFlow value={getWeekNumber(selectedDate)} />{" "}
             <button onClick={() => setSelectedDate(new Date())}>🗓️</button>{" "}
-            <NumberFlow value={getWeekNumber(selectedDate)} />
           </span>
           <span className={styles.headerTime__date}>
             {selectedDate.toLocaleDateString(userLocale, {
@@ -126,7 +127,7 @@ export const App = ({ serverDate }: AppProps) => {
       <div className="flex justify-center p-2.5">
         <span className="text-white font-bold text-m">
           {" "}
-          <NumberFlow value={daysLeftUntilEndOfYear(selectedDate)} /> jours
+          <NumberFlow value={daysLeftUntilEndOfYear(selectedDate)} /> jour(s)
           avant {selectedDate.getFullYear() + 1} 🎉
         </span>
       </div>
