@@ -34,3 +34,34 @@ export function isToday(date: Date | string, referenceDate = date) {
   const today = new Date(referenceDate);
   return new Date(date).toDateString() === today.toDateString();
 }
+
+export function generateCalendar(
+  startDate: string | number | Date,
+  numWeeks: number
+) {
+  const calendar: Record<string, Record<string, string>> = {};
+  const daysOfWeek = ["l", "m", "mer", "j", "v", "s", "d"];
+
+  const currentDate = new Date(startDate);
+  const startDayIndex = currentDate.getDay();
+
+  // Ajuster pour que lundi soit le premier jour
+  const adjustedStartIndex = startDayIndex === 0 ? 6 : startDayIndex - 1;
+
+  for (let week = 1; week <= numWeeks; week++) {
+    const weekKey = week.toString();
+    calendar[weekKey] = {};
+
+    daysOfWeek.forEach((day, index) => {
+      if (week === 1 && index < adjustedStartIndex) {
+        // Ajouter des jours vides avant la première date valide
+        calendar[weekKey][day] = "";
+      } else {
+        calendar[weekKey][day] = currentDate.toISOString();
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+  }
+
+  return calendar;
+}

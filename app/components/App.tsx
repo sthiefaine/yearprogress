@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import {
   daysLeftUntilEndOfYear,
+  generateCalendar,
   getWeekNumber,
   isDateInThePast,
   isToday,
@@ -21,7 +22,7 @@ export const App = ({ serverDate }: AppProps) => {
 
   const [selectedDate, setSelectedDate] = useState(date);
 
-  const [userLocale, setUserLocale] = useState(navigator.language);
+  const [userLocale, setUserLocale] = useState("us-US");
 
   const firstDayOfYear = new Date(selectedDate.getFullYear(), 0, 1);
 
@@ -30,36 +31,6 @@ export const App = ({ serverDate }: AppProps) => {
     setUserLocale(navigator.language || "fr-FR");
   }, [date]);
 
-  function generateCalendar(
-    startDate: string | number | Date,
-    numWeeks: number
-  ) {
-    const calendar: Record<string, Record<string, string>> = {};
-    const daysOfWeek = ["l", "m", "mer", "j", "v", "s", "d"];
-
-    const currentDate = new Date(startDate);
-    const startDayIndex = currentDate.getDay();
-
-    // Ajuster pour que lundi soit le premier jour
-    const adjustedStartIndex = startDayIndex === 0 ? 6 : startDayIndex - 1;
-
-    for (let week = 1; week <= numWeeks; week++) {
-      const weekKey = week.toString();
-      calendar[weekKey] = {};
-
-      daysOfWeek.forEach((day, index) => {
-        if (week === 1 && index < adjustedStartIndex) {
-          // Ajouter des jours vides avant la première date valide
-          calendar[weekKey][day] = "";
-        } else {
-          calendar[weekKey][day] = currentDate.toISOString();
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
-      });
-    }
-
-    return calendar;
-  }
 
   const startDate = firstDayOfYear;
   const numWeeks = 53;
@@ -91,17 +62,19 @@ export const App = ({ serverDate }: AppProps) => {
       <div className={styles.calendar}>
         {Object.values(calendar).map((weekNumber, index) => {
           return (
-            <div key={index} className="flex flex-row  p-px">
+            <div key={index} className="flex flex-row  pb-px">
               {Object.entries(weekNumber).map(([day, date]) => {
                 if (
                   new Date(date).getFullYear() !== selectedDate.getFullYear()
                 ) {
                   return (
-                    <div key={day} className={styles.calendar__day}>
+                    <div key={day} className={styles.calendar__day__outOfYear}>
                       ●
                     </div>
                   );
                 }
+
+                
                 return (
                   <div
                     key={day}
@@ -124,7 +97,7 @@ export const App = ({ serverDate }: AppProps) => {
           );
         })}
       </div>
-      <div className="flex justify-center p-2.5">
+      <div className="flex justify-center pb-10">
         <span className="text-white font-bold text-m">
           {" "}
           <NumberFlow value={daysLeftUntilEndOfYear(selectedDate)} /> jour(s)
